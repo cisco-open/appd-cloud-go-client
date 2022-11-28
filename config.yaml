@@ -1,0 +1,9 @@
+gitUserId: aniketk-crest
+gitRepoId: appdynamicscloud-go-client
+files:
+  client.mustache:
+    templateType: SupportingFiles
+    destinationFilename: client.go
+  configuration.mustache:
+    templateType: SupportingFiles
+    destinationFilename: configuration.go
