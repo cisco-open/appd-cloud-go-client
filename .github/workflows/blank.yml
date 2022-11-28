@@ -27,5 +27,6 @@ jobs:
         run: |
           git config --global user.name 'AniketK-Crest'
           git config --global user.email 'aniketk-crest@users.noreply.github.com'
-          git commit -am "Automated commit"
+          git add .
+          git commit -m "Automated commit"
           git push
