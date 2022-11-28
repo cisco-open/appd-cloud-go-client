@@ -1,0 +1,1598 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: support@appdynamics.com
+    name: AppDynamics Support
+    url: https://developer.cisco.com/docs/appdynamics/support/
+  description: Enables you to manage cloud connections
+  title: AppDynamics Cloud Connections API
+  version: 1.0.0
+servers:
+- url: http://cloudmonconnectionservice.cloudmon.svc.cluster.local:7778/api/v1
+- url: "https://{tenant-name}.observe.appdynamics.com/cloud/v1"
+  variables:
+    tenant-name:
+      default: customer1
+      description: Tenant name assigned by AppD
+tags:
+- name: Connections
+- name: Configurations
+- name: Resources
+paths:
+  /connections:
+    get:
+      description: Get all connections
+      operationId: getConnections
+      parameters:
+      - description: Filter expression
+        example: displayName sw "dev"
+        explode: true
+        in: query
+        name: filter
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Sort by
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          enum:
+          - displayName
+          - createdAt
+          type: string
+        style: form
+      - description: Order by
+        explode: true
+        in: query
+        name: order
+        required: false
+        schema:
+          enum:
+          - asc
+          - desc
+          type: string
+        style: form
+      - description: Maximum number of results to return
+        explode: true
+        in: query
+        name: max
+        required: false
+        schema:
+          default: 10
+          format: int32
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - description: Cursor for the paginated requests
+        explode: true
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connections'
+          description: List of connections
+          headers:
+            Link:
+              description: RFC 5988 compliant web link header
+              explode: false
+              schema:
+                example: <v1/connections?cursor=sfgsrg?filter=displayName sw "dev"&max=20&sort=displayName&order=desc>;
+                  rel="next"
+                type: string
+              style: simple
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal server error
+      summary: Query connections
+      tags:
+      - Connections
+    post:
+      description: Create a connection for a specific provider
+      operationId: createConnection
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Create connection for AWS role delegation:
+                value:
+                  type: aws
+                  displayName: AWS dev
+                  description: Description for this AWS role delegation connection
+                  details:
+                    accountId: "258762700219"
+                    accessType: role_delegation
+              Create connection for AWS role delegation with assigned configurationId:
+                value:
+                  type: aws
+                  displayName: AWS dev
+                  description: Description for this AWS role delegation connection
+                    with assigned configurationId
+                  details:
+                    accountId: "258762700219"
+                    accessType: role_delegation
+                  configurationId: fd7bb1bd-f605-4eac-9ec9-32b7031d4576
+              Create connection for AWS access key:
+                value:
+                  displayName: AWS dev
+                  description: Description for this AWS access key connection
+                  type: aws
+                  details:
+                    accessKeyId: AKBATYTCJY7XPKGABY5L
+                    secretAccessKey: 7ccw68gBKMMXUdXBut+7qC9CCr1brotxD5ClcGGE
+                    accessType: access_key
+              Create connection for AWS access key with assigned configurationId and set state to ACTIVE:
+                value:
+                  displayName: AWS dev
+                  description: Description for this AWS access key connection with
+                    assigned configurationId
+                  type: aws
+                  details:
+                    accessKeyId: AKBATYTCJY7XPKGABY5L
+                    secretAccessKey: 7ccw68gBKMMXUdXBut+7qC9CCr1brotxD5ClcGGE
+                    accessType: access_key
+                  configurationId: fd7bb1bd-f605-4eac-9ec9-32b7031d4576
+                  state: ACTIVE
+            schema:
+              $ref: '#/components/schemas/ConnectionRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              examples:
+                Connection for AWS Access Key without assigned configurationId:
+                  value:
+                    id: 381fb9c0-b971-44f4-a5ac-90bc385ae975
+                    createdAt: 2021-11-04T15:48:42.798Z
+                    updatedAt: 2021-11-04T15:48:42.798Z
+                    displayName: AWS Access Key Integration Delegation Test 1 a42f8e08-2ac0-46c6-8949-bd7d8d4adabc
+                    description: AWS Access Key Test Description
+                    type: aws
+                    state: PENDING CONFIGURATION
+                    stateMessage: Finish configuring your connection
+                    details:
+                      accessKeyId: TESTh4oCdeW9KF9X6aQz
+                      secretAccessKey: '*******************'
+                      accountId: "1002468003"
+                      accessType: access_key
+                Connection for AWS Access Key with assigned configurationId:
+                  value:
+                    id: 381fb9c0-b971-44f4-a5ac-90bc385ae975
+                    createdAt: 2021-11-04T15:48:42.798Z
+                    updatedAt: 2021-11-04T15:48:42.798Z
+                    displayName: AWS Access Key Integration Delegation Test 1 a42f8e08-2ac0-46c6-8949-bd7d8d4adabc
+                    description: AWS Access Key Test Description
+                    type: aws
+                    state: ACTIVE
+                    stateMessage: Connection is active and collecting data.
+                    details:
+                      accessKeyId: TESTh4oCdeW9KF9X6aQz
+                      secretAccessKey: '*******************'
+                      accountId: "1002468003"
+                      accessType: access_key
+                    configurationId: fd7bb1bd-f605-4eac-9ec9-32b7031d4576
+                Connection for AWS role delegation without assigned configurationId:
+                  value:
+                    id: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+                    createdAt: 2021-07-19T23:37:50.961Z
+                    updatedAt: 2021-07-19T23:37:50.961Z
+                    state: INCOMPLETE
+                    stateMessage: Please enter a role name to connect.
+                    displayName: AWS dev
+                    description: A description for this AWS role delegation connection
+                    type: aws
+                    details:
+                      roleName: foo
+                      accountId: "258762700219"
+                      appDynamicsAwsAccountId: "548762700219"
+                      externalId: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+                      accessType: role_delegation
+                Connection for AWS role delegation with assigned configurationId:
+                  value:
+                    id: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+                    createdAt: 2021-07-19T23:37:50.961Z
+                    updatedAt: 2021-07-19T23:37:50.961Z
+                    state: INCOMPLETE
+                    stateMessage: Please enter a role name to connect.
+                    configurationId: fd7bb1bd-f605-4eac-9ec9-32b7031d4576
+                    displayName: AWS dev
+                    description: A description for this AWS role delegation connection
+                      with assigned configurationId
+                    type: aws
+                    details:
+                      roleName: foo
+                      accountId: "258762700219"
+                      appDynamicsAwsAccountId: "548762700219"
+                      externalId: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+                      accessType: role_delegation
+              schema:
+                $ref: '#/components/schemas/ConnectionResponse'
+          description: Connection created successfully
+          headers:
+            Location:
+              description: Link to the newly created connection
+              explode: false
+              schema:
+                example: /v1/cloud/connections/7c8c01e3-dc9a-4e7e-a536-7240c62af801
+                type: string
+              style: simple
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Request is invalid
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal server error
+      summary: Create a connection
+      tags:
+      - Connections
+  /connections/{connectionId}:
+    delete:
+      description: Delete a connection by ID
+      operationId: deleteConnection
+      parameters:
+      - description: Connection ID
+        explode: false
+        in: path
+        name: connectionId
+        required: true
+        schema:
+          example: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Connection successfully deleted
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: A connection with this ID does not exist
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal server error
+      summary: Delete connection
+      tags:
+      - Connections
+    get:
+      description: Get an individual connection by ID
+      operationId: getConnection
+      parameters:
+      - description: Connection ID
+        explode: false
+        in: path
+        name: connectionId
+        required: true
+        schema:
+          example: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionResponse'
+          description: Requested connection
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: A connection with this ID does not exist
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal server error
+      summary: Get a connection
+      tags:
+      - Connections
+    patch:
+      description: Update a connection by ID
+      operationId: updateConnection
+      parameters:
+      - description: Connection ID
+        explode: false
+        in: path
+        name: connectionId
+        required: true
+        schema:
+          example: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Update all fields:
+                value:
+                  displayName: AWS dev
+                  description: Description for this connection or configuration
+                  details:
+                    roleName: AppDynamicsMonitoringRole
+                  configurationId: fd7bb1bd-f605-4eac-9ec9-32b7031d4576
+                  state: ACTIVE
+              Update some fields:
+                value:
+                  description: A description for this connection
+                  configurationId: fd7bb1bd-f605-4eac-9ec9-32b7031d4576
+              Update configurationId and activate:
+                value:
+                  configurationId: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+                  state: ACTIVE
+              Update configurationId:
+                value:
+                  configurationId: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+            schema:
+              $ref: '#/components/schemas/ConnectionUpdate'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionResponse'
+          description: Connection updated successfully
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid request
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: A connection with this ID does not exist
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal server error
+      summary: Update a connection
+      tags:
+      - Connections
+  /configurations:
+    get:
+      description: Get all configurations
+      operationId: getConfigurations
+      parameters:
+      - description: Filter expression
+        example: displayName sw "dev"
+        explode: true
+        in: query
+        name: filter
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Sort by
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          enum:
+          - displayName
+          - createdAt
+          type: string
+        style: form
+      - description: Order by
+        explode: true
+        in: query
+        name: order
+        required: false
+        schema:
+          enum:
+          - asc
+          - desc
+          type: string
+        style: form
+      - description: Maximum number of results to return
+        explode: true
+        in: query
+        name: max
+        required: false
+        schema:
+          default: 10
+          format: int32
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - description: Cursor for the paginated requests
+        explode: true
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configurations'
+          description: List of configurations
+          headers:
+            Link:
+              description: RFC 5988 compliant web link header
+              explode: false
+              schema:
+                example: <v1/configurations?cursor=sfgsrg&filter=displayName sw "dev"&max=20&sort=displayName&order=desc>;
+                  rel="next"
+                type: string
+              style: simple
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal server error
+      summary: Query configurations
+      tags:
+      - Configurations
+    post:
+      description: Create a configuration for a specific provider
+      operationId: createConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Configuration'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationDetail'
+          description: Configuration created successfully
+          headers:
+            Location:
+              description: Link to the newly created connection
+              explode: false
+              schema:
+                example: /v1/cloud/Configuration/7c8c01e3-dc9a-4e7e-a536-7240c62af801
+                type: string
+              style: simple
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid request
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal server error
+      summary: Create a configuration
+      tags:
+      - Configurations
+  /configurations/{configurationId}:
+    delete:
+      description: Delete a configuration by ID
+      operationId: deleteConfiguration
+      parameters:
+      - description: Configuration ID
+        explode: false
+        in: path
+        name: configurationId
+        required: true
+        schema:
+          example: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Connection successfully deleted
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: A connection with this ID does not exist
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal server error
+      summary: Delete configuration
+      tags:
+      - Configurations
+    get:
+      description: Get a configuration by ID
+      operationId: getConfiguration
+      parameters:
+      - description: Configuration ID
+        explode: false
+        in: path
+        name: configurationId
+        required: true
+        schema:
+          example: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationDetail'
+          description: Connection updated successfully
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid request
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: A connection with this ID does not exist
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal server error
+      summary: Get a configuration
+      tags:
+      - Configurations
+    patch:
+      description: Update a configuration by ID
+      operationId: updateConfiguration
+      parameters:
+      - description: Configuration ID
+        explode: false
+        in: path
+        name: configurationId
+        required: true
+        schema:
+          example: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Update description:
+                value:
+                  description: An updated description for this configuration
+              Update display name and description:
+                value:
+                  displayName: AWS dev configuration updated
+                  description: An updated description for this AWS configuration
+              Update the configuration details. Replace the existing configuration details with these values:
+                value:
+                  details:
+                    regions:
+                    - us-east-1
+                    - us-west-2
+                    polling:
+                      interval: 5
+                      unit: minute
+                    services:
+                    - name: ec2
+                      polling:
+                        interval: 5
+                        unit: minute
+                    - name: aurora
+                      polling:
+                        interval: 5
+                        unit: minute
+              Update the description for a connection or configuration:
+                value:
+                  displayName: AWS dev
+                  description: An updated description for this AWS configuration
+                  type: aws
+                  details:
+                    regions:
+                    - us-east-1
+                    - us-west-2
+                    polling:
+                      interval: 5
+                      unit: minute
+                    services:
+                    - name: ec2
+                      polling:
+                        interval: 5
+                        unit: minute
+                    - name: aurora
+                      polling:
+                        interval: 5
+                        unit: minute
+            schema:
+              $ref: '#/components/schemas/ConfigurationUpdate'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationDetail'
+          description: Connection updated successfully
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid request
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: A connection with this ID does not exist
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal server error
+      summary: Update a configuration
+      tags:
+      - Configurations
+  /regions:
+    get:
+      description: Get all supported hosting regions for a given cloud provider
+      operationId: getRegions
+      parameters:
+      - description: Cloud hosting provider type
+        explode: true
+        in: query
+        name: type
+        required: true
+        schema:
+          $ref: '#/components/schemas/ProviderType'
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                items:
+                - id: us-gov-west-1
+                  displayName: AWS GovCloud (US)
+                - id: us-east-1
+                  displayName: US East (N. Virginia)
+              schema:
+                $ref: '#/components/schemas/ConfigurationResourceList'
+          description: Successfully retrieved all supported hosting regions for the
+            given cloud provider
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid request
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+      summary: Get all supported hosting regions
+      tags:
+      - Resources
+  /services:
+    get:
+      description: Get all supported hosting services for a given provider type
+      operationId: getServices
+      parameters:
+      - description: Hosting provider type
+        explode: true
+        in: query
+        name: type
+        required: true
+        schema:
+          $ref: '#/components/schemas/ProviderType'
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                items:
+                - id: vm
+                  displayName: Azure Virtual Machine
+                  description: "Azure Virtual Machines (VM) is one of several types\
+                    \ of on-demand, scalable computing resources that Azure offers."
+              schema:
+                $ref: '#/components/schemas/ConfigurationResourceList'
+          description: Successfully retrieved all supported services for given hosting
+            provider
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid request
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthenticated
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+      summary: Get all supported hosting services
+      tags:
+      - Resources
+components:
+  schemas:
+    Description:
+      properties:
+        displayName:
+          description: Name of the connection or configuration
+          example: AWS dev
+          type: string
+        description:
+          description: Description for this connection or configuration
+          example: AWS EC2 configuration
+          type: string
+      required:
+      - displayName
+      type: object
+    BaseEntity:
+      allOf:
+      - $ref: '#/components/schemas/Description'
+      - $ref: '#/components/schemas/BaseEntity_allOf'
+    ConnectionAccessType:
+      default: role_delegation
+      description: Connection type discriminator
+      enum:
+      - role_delegation
+      - access_key
+      type: string
+    AccessType:
+      discriminator:
+        mapping:
+          role_delegation: '#/components/schemas/AWSRoleDelegationCreationDetails'
+          access_key: '#/components/schemas/AWSAccessKeyDetails'
+        propertyName: accessType
+      properties:
+        accessType:
+          $ref: '#/components/schemas/ConnectionAccessType'
+      required:
+      - accessType
+      type: object
+    AWSAccount:
+      example: "258762700219"
+      type: string
+    AWSRoleDelegationCreationDetails:
+      allOf:
+      - $ref: '#/components/schemas/AWSRoleDelegationCreationDetails_allOf'
+      - $ref: '#/components/schemas/AWSRoleDelegationCreationDetails_allOf_1'
+    AWSRoleDelegationUpdateDetails:
+      allOf:
+      - $ref: '#/components/schemas/AWSRoleDelegationCreationDetails_allOf'
+      - $ref: '#/components/schemas/AWSRoleDelegationUpdateDetails_allOf'
+    AWSAccessKeyDetails:
+      allOf:
+      - $ref: '#/components/schemas/AccessType'
+      - $ref: '#/components/schemas/AWSAccessKeyDetails_allOf'
+    AzureBaseDetails:
+      properties:
+        clientId:
+          example: 17760330-4ecd-47d5-818b-40308d3e67d1
+          type: string
+        clientSecret:
+          example: k33C_.5b0VrXSiQIf1t-c--p18~Ea_L~2H
+          format: password
+          type: string
+      required:
+      - clientId
+      - clientSecret
+      type: object
+    AzureDetails:
+      allOf:
+      - $ref: '#/components/schemas/AzureBaseDetails'
+      - $ref: '#/components/schemas/AzureDetails_allOf'
+    BaseConnection:
+      allOf:
+      - $ref: '#/components/schemas/BaseEntity'
+      - $ref: '#/components/schemas/BaseConnection_allOf'
+    ConnectionResponse:
+      allOf:
+      - $ref: '#/components/schemas/ConnectionDetail'
+      - $ref: '#/components/schemas/ConnectionResponse_allOf'
+    AccessKeyConnectionResponseDetails:
+      allOf:
+      - $ref: '#/components/schemas/AWSAccessKeyDetails'
+      - $ref: '#/components/schemas/AWSRoleDelegationCreationDetails_allOf_1'
+    RoleDelegationConnectionResponseDetails:
+      allOf:
+      - $ref: '#/components/schemas/AWSRoleDelegationCreationDetails'
+      - $ref: '#/components/schemas/AWSRoleDelegationUpdateDetails'
+      - $ref: '#/components/schemas/RoleDelegationConnectionResponseDetails_allOf'
+    ConnectionResponseDetails:
+      oneOf:
+      - $ref: '#/components/schemas/AWSConnectionResponseDetails'
+      - $ref: '#/components/schemas/AzureDetails'
+    AWSConnectionResponseDetails:
+      oneOf:
+      - $ref: '#/components/schemas/RoleDelegationConnectionResponseDetails'
+      - $ref: '#/components/schemas/AccessKeyConnectionResponseDetails'
+    AWSConnectionRequestDetails:
+      oneOf:
+      - $ref: '#/components/schemas/AWSAccessKeyDetails'
+      - $ref: '#/components/schemas/AWSRoleDelegationCreationDetails'
+    ConnectionRequestDetails:
+      oneOf:
+      - $ref: '#/components/schemas/AWSConnectionRequestDetails'
+      - $ref: '#/components/schemas/AzureDetails'
+    ConnectionRequest:
+      allOf:
+      - $ref: '#/components/schemas/Connection'
+      - $ref: '#/components/schemas/ConnectionRequest_allOf'
+    Connection:
+      allOf:
+      - $ref: '#/components/schemas/BaseConnection'
+      - $ref: '#/components/schemas/Connection_allOf'
+    ConnectionUpdate:
+      example:
+        displayName: AWS dev
+        description: Updated description for this connection
+        details: null
+        configurationId: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+        state: ACTIVE
+      properties:
+        displayName:
+          description: Updated name for the connection
+          example: AWS dev
+          type: string
+        description:
+          example: Updated description for this connection
+          nullable: true
+          type: string
+        configurationId:
+          description: Configuration ID assigned to the connection
+          example: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+          format: uuid
+          type: string
+        state:
+          description: Set the state of the connection
+          enum:
+          - ACTIVE
+          - INACTIVE
+          type: string
+        details:
+          $ref: '#/components/schemas/ConnectionUpdate_details'
+      type: object
+    ConnectionDetail:
+      allOf:
+      - $ref: '#/components/schemas/ConnectionDetail_allOf'
+      - $ref: '#/components/schemas/BaseConnection'
+    Connections:
+      additionalProperties: false
+      example:
+        items:
+        - null
+        - null
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ConnectionResponse'
+          type: array
+      required:
+      - items
+      type: object
+    ProviderType:
+      description: Provider type (also known as Connection type)
+      enum:
+      - aws
+      - azure
+      example: aws
+      type: string
+    Error:
+      properties:
+        type:
+          example: https://docs.appdynamics.com/errors/input-validation
+          type: string
+        title:
+          example: Invalid request
+          type: string
+        detail:
+          example: Invalid connection type 'foobar'
+          type: string
+      required:
+      - detail
+      - title
+      - type
+      type: object
+    Configuration:
+      discriminator:
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/AWSConfiguration'
+      - $ref: '#/components/schemas/AzureConfiguration'
+    ConfigurationUpdate:
+      example:
+        displayName: AWS dev
+        description: Updated description for this configuration
+        details: null
+      properties:
+        displayName:
+          description: Name of the configuration
+          example: AWS dev
+          type: string
+        description:
+          example: Updated description for this configuration
+          nullable: true
+          type: string
+        details:
+          $ref: '#/components/schemas/ConfigurationUpdate_details'
+      type: object
+    AWSConfiguration:
+      allOf:
+      - $ref: '#/components/schemas/BaseEntity'
+      - $ref: '#/components/schemas/AWSConfiguration_allOf'
+    AzureConfiguration:
+      allOf:
+      - $ref: '#/components/schemas/BaseEntity'
+      - $ref: '#/components/schemas/AzureConfiguration_allOf'
+    BaseConfigurationDetails:
+      properties:
+        regions:
+          description: Geographic locations used to fetch metrics
+          items:
+            type: string
+          type: array
+        polling:
+          $ref: '#/components/schemas/ScheduleInterval'
+        importTags:
+          $ref: '#/components/schemas/ImportTagConfiguration'
+        tagFilter:
+          description: "expression for filtering resources to be monitored, based\
+            \ on tags"
+          example: (tags(env) = 'prod' || tags(env) = 'production')) && tags(project)
+            = 'cloudcollectors'
+          type: string
+        services:
+          description: services for which we will fetch metrics
+          items:
+            $ref: '#/components/schemas/Service'
+          type: array
+      type: object
+    AzureConfigurationDetails:
+      allOf:
+      - $ref: '#/components/schemas/BaseConfigurationDetails'
+      - $ref: '#/components/schemas/AzureConfigurationDetails_allOf'
+    AWSConfigurationDetails:
+      allOf:
+      - $ref: '#/components/schemas/BaseConfigurationDetails'
+      - $ref: '#/components/schemas/AWSConfigurationDetails_allOf'
+    Service:
+      properties:
+        name:
+          example: ec2
+          type: string
+        importTags:
+          $ref: '#/components/schemas/ImportTagConfiguration'
+        tagFilter:
+          description: "expression for filtering resources to be monitored, based\
+            \ on tags"
+          example: (tags(env) = 'prod' || tags(env) = 'production')) && tags(project)
+            = 'cloudcollectors'
+          type: string
+        polling:
+          $ref: '#/components/schemas/ScheduleInterval'
+      required:
+      - name
+      type: object
+    ScheduleInterval:
+      description: How often the selected connection is polled for information
+      example:
+        interval: 5
+        unit: minute
+      properties:
+        interval:
+          default: 5
+          description: The polling interval is five (5) minutes
+          format: int32
+          type: integer
+        unit:
+          default: minute
+          enum:
+          - minute
+          type: string
+      required:
+      - interval
+      - unit
+      type: object
+    BaseConfigurationResource:
+      example:
+        displayName: displayName
+        description: description
+        id: id
+      properties:
+        id:
+          description: unique identifier for this resource
+          type: string
+        displayName:
+          description: display name for this resource
+          type: string
+        description:
+          description: a description of this resource
+          type: string
+      required:
+      - displayName
+      - id
+      type: object
+    ConfigurationResourceList:
+      example:
+        items:
+        - displayName: displayName
+          description: description
+          id: id
+        - displayName: displayName
+          description: description
+          id: id
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BaseConfigurationResource'
+          type: array
+      required:
+      - items
+      type: object
+    Configurations:
+      example:
+        items:
+        - null
+        - null
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ConfigurationDetail'
+          type: array
+      required:
+      - items
+      type: object
+    ConfigurationDetail:
+      allOf:
+      - $ref: '#/components/schemas/ConfigurationDetail_allOf'
+      - discriminator:
+          propertyName: type
+        oneOf:
+        - $ref: '#/components/schemas/AWSConfiguration'
+        - $ref: '#/components/schemas/AzureConfiguration'
+    ImportTagConfiguration:
+      description: Configuration for importing tags of resources that are being monitored
+      example:
+        enabled: true
+        excludedKeys:
+        - "key1, key2"
+      properties:
+        enabled:
+          default: true
+          description: It is true by default. Tags will be imported for all the resources
+            that are being monitored by default
+          type: boolean
+        excludedKeys:
+          description: Array of that need to be excluded from being imported. It can
+            be set only when enabled is true
+          example:
+          - key1
+          - key2
+          items:
+            example: key1
+            type: string
+          type: array
+      required:
+      - enabled
+      type: object
+    TagFilter:
+      description: "expression for filtering resources to be monitored, based on tags"
+      example: (tags(env) = 'prod' || tags(env) = 'production')) && tags(project)
+        = 'cloudcollectors'
+      type: string
+    BaseEntity_allOf:
+      discriminator:
+        propertyName: type
+      properties:
+        type:
+          $ref: '#/components/schemas/ProviderType'
+      required:
+      - type
+      type: object
+      example: null
+    AWSRoleDelegationCreationDetails_allOf:
+      properties:
+        accessType:
+          $ref: '#/components/schemas/ConnectionAccessType'
+      required:
+      - accessType
+      type: object
+      example: null
+    AWSRoleDelegationCreationDetails_allOf_1:
+      properties:
+        accountId:
+          example: "258762700219"
+          type: string
+      required:
+      - accountId
+      type: object
+      example: null
+    AWSRoleDelegationUpdateDetails_allOf:
+      properties:
+        roleName:
+          example: example-role-name-update
+          type: string
+      required:
+      - roleName
+      type: object
+      example: null
+    AWSAccessKeyDetails_allOf:
+      properties:
+        accessKeyId:
+          description: "AWS Access keys are long-term credentials for an AWS IAM user,\
+            \ or account root user. The access key ID is one of two access keys needed\
+            \ to authenticate to AWS. The other is a secret access key. You need access\
+            \ keys to make programmatic calls using the AWS CLI, AWS Tools, or PowerShell."
+          example: AKBATYTCJY7XPKGABY5L
+          type: string
+        secretAccessKey:
+          description: "The secret access key is one of two access keys needed to\
+            \ authenticate to AWS. The other is an access key ID. The secret access\
+            \ key is only available once, when you create it. Download the generated\
+            \ secret access key and save in a secure location. If the secret access\
+            \ key is lost or deleted, you must create a new one. You need access keys\
+            \ to make programmatic calls using the AWS CLI, AWS Tools, or PowerShell."
+          example: 7ccw68gBKMMXUdXBut+7qC9CCr1brotxD5ClcGGE
+          format: password
+          type: string
+      required:
+      - accessKeyId
+      - secretAccessKey
+      type: object
+      example: null
+    AzureDetails_allOf:
+      properties:
+        clientId:
+          description: "Client IDs, also known as Application IDs, are long-term credentials\
+            \ for an Azure user, or account root user. The Client ID is one of three\
+            \ properties needed to authenticate to Azure, the other two being Client\
+            \ Secret and Tenant (Directory) ID"
+          example: 17760330-4ecd-47d5-818b-40308d3e67d1
+          type: string
+        clientSecret:
+          description: "A Client Secret allows an Azure application to provide its\
+            \ identity when requesting an access token. The Client Secret is one of\
+            \ three properties needed to authenticate to Azure, the other two being\
+            \ Client ID (Application ID) and Tenant (Directory) ID"
+          example: k33C_.5b0VrXSiQIf1t-c--p18~Ea_L~2H
+          format: password
+          type: string
+        tenantId:
+          description: The Azure AD Tenant (Directory) IDis one of three properties
+            needed to authenticate to Azure. The other two are Client Secret and Client
+            ID (Application ID).
+          example: 5ae1af62-9505-4097-a69a-c1553ef7840e
+          type: string
+        subscriptionId:
+          description: "Specify a GUID Subscription ID to monitor. If monitoring all\
+            \ subscriptions, do not specify a Subscription ID."
+          example: 00000000-0000-0000-0000-000000000000
+          type: string
+      required:
+      - clientId
+      - clientSecret
+      - subscriptionId
+      - tenantId
+      type: object
+      example: null
+    BaseConnection_allOf:
+      properties:
+        configurationId:
+          description: Configuration ID assigned to the connection
+          example: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+          format: uuid
+          type: string
+      type: object
+      example: null
+    ConnectionResponse_allOf:
+      properties:
+        details:
+          $ref: '#/components/schemas/ConnectionResponseDetails'
+      required:
+      - details
+      type: object
+      example: null
+    RoleDelegationConnectionResponseDetails_allOf:
+      properties:
+        appDynamicsAwsAccountId:
+          description: AppDynamics AWS Account ID. Delegates a user to an Identity
+            Access Management (IAM) role in AWS. The AWS IAM role provides AppDynamics
+            access to resources.
+          example: "548762700219"
+          externalDocs:
+            url: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html
+          type: string
+        externalId:
+          description: Returns an external ID for AWS role delegation connections
+          example: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+          externalDocs:
+            url: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html
+          format: uuid
+          type: string
+      type: object
+      example: null
+    ConnectionRequest_allOf:
+      properties:
+        details:
+          $ref: '#/components/schemas/ConnectionRequestDetails'
+      required:
+      - details
+      type: object
+      example: null
+    Connection_allOf:
+      properties:
+        state:
+          description: Set the state of the connection
+          enum:
+          - ACTIVE
+          - INACTIVE
+          type: string
+      type: object
+      example: null
+    ConnectionUpdate_details_oneOf:
+      properties:
+        roleName:
+          example: AppDynamicsMonitoringRole
+          type: string
+      required:
+      - roleName
+      type: object
+    ConnectionUpdate_details_oneOf_1:
+      properties:
+        accessKeyId:
+          example: AKBATYTCJY7XPKGABY5L
+          type: string
+        secretAccessKey:
+          example: 7ccw68gBKMMXUdXBut+7qC9CCr1brotxD5ClcGGE
+          format: password
+          type: string
+      required:
+      - accessKeyId
+      - secretAccessKey
+      type: object
+    ConnectionUpdate_details_oneOf_2:
+      properties:
+        clientId:
+          example: 17760330-4ecd-47d5-818b-40308d3e67d1
+          type: string
+        clientSecret:
+          example: k33C_.5b0VrXSiQIf1t-c--p18~Ea_L~2H
+          format: password
+          type: string
+      required:
+      - clientId
+      - clientSecret
+      type: object
+    ConnectionUpdate_details:
+      oneOf:
+      - $ref: '#/components/schemas/ConnectionUpdate_details_oneOf'
+      - $ref: '#/components/schemas/ConnectionUpdate_details_oneOf_1'
+      - $ref: '#/components/schemas/ConnectionUpdate_details_oneOf_2'
+    ConnectionDetail_allOf:
+      properties:
+        id:
+          example: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+          format: uuid
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        state:
+          description: Connection state
+          enum:
+          - INACTIVE
+          - ACTIVE
+          - PENDING CONFIGURATION
+          - INCOMPLETE
+          - CONFIGURED
+          - INSUFFICIENT LICENSE
+          - ERROR
+          - WARNING
+          - CRITICAL
+          type: string
+        stateMessage:
+          additionalProperties: false
+          description: Connection state message
+          example: Successfully connected
+          type: object
+      required:
+      - createdAt
+      - id
+      - state
+      - stateMessage
+      - updatedAt
+      type: object
+      example: null
+    ConfigurationUpdate_details:
+      anyOf:
+      - $ref: '#/components/schemas/AWSConfigurationDetails'
+      - $ref: '#/components/schemas/AzureConfigurationDetails'
+    AWSConfiguration_allOf:
+      example: "{\"displayName\":\"Example AWS Configuration\",\"description\":\"\
+        AWS Example Configuration\",\"type\":\"aws\",\"details\":{\"importTags\":{\"\
+        enabled\":true,\"excludedKeys\":[\"local\",\"sandbox\"]},\"tagFilter\":\"\
+        (tags(env) = 'prod' || tags(env) = 'production'))\",\"regions\":[\"us-east-1\"\
+        ,\"us-west-1\"],\"polling\":{\"interval\":5,\"unit\":\"minute\"},\"services\"\
+        :[{\"name\":\"elb\",\"polling\":{\"interval\":5,\"unit\":\"minute\"}},{\"\
+        name\":\"ec2\",\"polling\":{\"interval\":5,\"unit\":\"minute\"}}]}}"
+      properties:
+        details:
+          $ref: '#/components/schemas/AWSConfigurationDetails'
+      required:
+      - details
+      type: object
+    AzureConfiguration_allOf:
+      example: "{\"displayName\":\"Example Azure Configuration\",\"description\":\"\
+        Azure Example Configuration\",\"type\":\"azure\",\"details\":{\"regions\"\
+        :[\"westus\"],\"importTags\":{\"enabled\":true,\"excludedKeys\":[\"local\"\
+        ,\"sandbox\"]},\"tagFilter\":\"(tags(env) = 'prod' || tags(env) = 'production'))\"\
+        ,\"services\":[{\"name\":\"vm\",\"importTags\":{\"enabled\":true,\"excludedKeys\"\
+        :[\"dev\"]},\"tagFilter\":\"tags(project) = 'cloudcollectors' && tags(jira)\
+        \ IN ['XTNSBL','ACE'] && !(tags(region) IN ['US','IN']) && HAS tags(monitorEnabled)\
+        \ && !(HAS tags(restrictedUse)\",\"polling\":{\"interval\":5,\"unit\":\"minute\"\
+        }},{\"name\":\"mysql\",\"polling\":{\"interval\":5,\"unit\":\"minute\"}}]}}"
+      properties:
+        details:
+          $ref: '#/components/schemas/AzureConfigurationDetails'
+      required:
+      - details
+      type: object
+    AzureConfigurationDetails_allOf:
+      properties:
+        resourceGroups:
+          description: Azure Resource groups used to fetch metrics
+          example:
+          - resourceGroup1
+          - resourceGroup2
+          items:
+            type: string
+          type: array
+        services:
+          example:
+          - name: vm
+            importTags:
+              enabled: true
+              excludedKeys:
+              - dev
+            tagFilter: "tags(project) = 'cloudcollectors' && tags(jira) IN ['XTNSBL','ACE']\
+              \ && !(tags(region) IN ['US','IN']) && HAS tags(monitorEnabled) && !(HAS\
+              \ tags(restrictedUse)"
+            polling:
+              interval: 5
+              unit: minute
+          - name: mysql
+            polling:
+              interval: 5
+              unit: minute
+        regions:
+          example:
+          - eastus
+          - westus
+      type: object
+      example: null
+    AWSConfigurationDetails_allOf:
+      properties:
+        services:
+          example:
+          - name: ec2
+            importTags:
+              enabled: true
+              excludedKeys:
+              - local
+              - sandbox
+            tagFilter: "(tags(env) = 'prod' || tags(env) = 'production')) && tags(project)\
+              \ = 'cloudcollectors' && tags(jira) IN ['XTNSBL','ACE'] && !(tags(region)\
+              \ IN ['US','IN']) && HAS tags(monitorEnabled) && !(HAS tags(restrictedUse))"
+            polling:
+              interval: 5
+              unit: minute
+          - name: aurora
+            polling:
+              interval: 5
+              unit: minute
+        regions:
+          example:
+          - us-east-1
+          - us-west-1
+      type: object
+      example: null
+    ConfigurationDetail_allOf:
+      properties:
+        id:
+          example: 7c8c01e3-dc9a-4e7e-a536-7240c62af801
+          format: uuid
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - createdAt
+      - id
+      - updatedAt
+      type: object
+      example: null
+x-visibility-level: external
+x-doc-visibility-level: public
