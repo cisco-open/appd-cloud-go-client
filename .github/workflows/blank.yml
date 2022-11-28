@@ -17,11 +17,15 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Run a one-line script
-        run: echo Hello, world!
-
       - name: Run script file
         run: |
          chmod +x ./script.sh
          ./script.sh
         shell: bash
+        
+      - name: Commit report
+        run: |
+          git config --global user.name 'AniketK-Crest'
+          git config --global user.email 'aniketk-crest@users.noreply.github.com'
+          git commit -am "Automated commit"
+          git push
