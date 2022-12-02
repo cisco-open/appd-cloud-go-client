@@ -11,8 +11,13 @@ while IFS= read -r url || [[ -n "$url" ]]; do
     version=$( echo $version | sed 's/.*://' | sed 's/\..*//' | tr -dc '[:alnum:]\n\r' )
     echo $version
 
+    version=$1
+    if [ -z "$1" ]
+        then
+            version="6.2.1"
+    fi
     docker run --rm \
-        -v ${PWD}:/local openapitools/openapi-generator-cli:v$1 generate \
+        -v ${PWD}:/local openapitools/openapi-generator-cli:v${version} generate \
         -i ${url} \
         -g go \
         -o /local/apis/v${version}/${title} \
