@@ -11,7 +11,7 @@ on:
     inputs:
       openApiVersion:
         description: 'OpenApi Generator Version'
-        required: false
+        required: true
         default: '6.2.1'
     
 
@@ -33,6 +33,6 @@ jobs:
         run: |
           git config --global user.email "arjun.prajapati@crestdatasys.com"
           git config --global user.name "arjunprajapati_crest"
-          git add .
-          git commit -m "Automated commit"
-          git push origin arjun-github-action
+          # git add .
+          # git commit -m "Automated commit"
+          # git push origin arjun-github-action
