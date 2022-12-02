@@ -27,7 +27,7 @@ jobs:
       - name: Run script file
         run: |
          chmod +x script.sh
-         sh ./script.sh "${{ github.event.inputs.openApiVersion }}"
+         ./script.sh "${{ github.event.inputs.openApiVersion }}"
         shell: bash
         
       - name: Commit report
