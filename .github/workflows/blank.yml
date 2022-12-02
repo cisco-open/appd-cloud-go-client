@@ -2,12 +2,18 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "arjun-github-action" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "arjun-github-action" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      openApiVersion:
+        description: 'OpenApi Generator Version'
+        required: false
+        default: '6.2.1'
+    
 
 jobs:
   build:
@@ -20,7 +26,7 @@ jobs:
       - name: Run script file
         run: |
          chmod +x ./script.sh
-         ./script.sh
+         ./script.sh ${{ github.event.inputs.openApiVersion }}
         shell: bash
         
       - name: Commit report

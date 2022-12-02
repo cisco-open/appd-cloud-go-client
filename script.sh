@@ -12,7 +12,7 @@ while IFS= read -r url || [[ -n "$url" ]]; do
     echo $version
 
     docker run --rm \
-        -v ${PWD}:/local openapitools/openapi-generator-cli:v6.2.1 generate \
+        -v ${PWD}:/local openapitools/openapi-generator-cli:v$1 generate \
         -i ${url} \
         -g go \
         -o /local/apis/v${version}/${title} \
