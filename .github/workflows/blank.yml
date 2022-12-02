@@ -31,6 +31,8 @@ jobs:
         
       - name: Commit report
         run: |
+          git config --global user.email "arjun.prajapati@crestdatasys.com"
+          git config --global user.name "arjunprajapati_crest"
           git add .
           git commit -m "Automated commit"
           git push origin arjun-github-action
