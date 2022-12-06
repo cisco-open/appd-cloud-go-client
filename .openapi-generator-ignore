@@ -1,0 +1,20 @@
+# map[string]interface{} bug
+# https://github.com/OpenAPITools/openapi-generator/pull/13472
+**/model_data_result_item_inner.go
+
+# The New* methods of these models assign ConnectionAccessType to AccessType.
+# We are currently not sure what is causing this behavior so temporarily
+# ignoring them until this issue is mitigated.
+**/model_access_key_connection_response_details.go
+**/model_aws_access_key_details.go
+**/model_aws_role_delegation_creation_details.go
+**/model_aws_role_delegation_update_details.go
+**/model_role_delegation_connection_response_details.go
+
+# These models fail to import package "time" for attributes being nested
+# inside allOf
+**/model_configuration_detail.go
+**/model_connection_detail.go
+**/model_connection_response.go
+
+# These files won't be overwritten.
