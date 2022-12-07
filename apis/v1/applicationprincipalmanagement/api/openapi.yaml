@@ -1,0 +1,934 @@
+openapi: 3.0.1
+info:
+  contact:
+    email: info@appdynamics.com
+    name: AppDynamics
+    url: https://appdynamics.com
+  description: "Handles all administrative requests to manage application identities,\
+    \ including both Agents and Service principals."
+  title: Application Principal Management Service
+  version: "1.0"
+servers:
+- url: http://app-principal-mgmt.iam.svc.cluster.local:80/v1beta
+- description: Production environment
+  url: "https://{tenant-name}.observe.appdynamics.com/administration/v1beta"
+  variables:
+    tenant-name:
+      default: customer1
+      description: Tenant name
+tags:
+- name: Agents
+- name: Services
+paths:
+  /clients/agents:
+    get:
+      description: List all agent client
+      operationId: listAllAgentClients
+      parameters:
+      - description: The page identifier used in pagination.
+        explode: true
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Max number of agent clients to be returned. Defaults to 100.
+        explode: true
+        in: query
+        name: max
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentClientsContainer'
+          description: OK
+          headers:
+            Link:
+              description: RFC 5988 compliant Link header
+              example: <https://appdynamics.sample/administration/v1beta/clients/agents?cursor=sfgsrg>;
+                rel="next"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InvalidFilterError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Agents
+    post:
+      description: Creates a new agent client
+      operationId: createAgentClient
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentClientRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentClientResponseCreate'
+          description: Created
+          headers:
+            Location:
+              description: URL of the created entity
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Agents
+  /clients/agents/{clientId}:
+    delete:
+      description: Delete an existing agent client
+      operationId: deleteAgentClient
+      parameters:
+      - description: The unique client identifer
+        explode: false
+        in: path
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFound'
+          description: Not Found
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Agents
+    get:
+      description: Get a single agent client from the client ID
+      operationId: getAgentClient
+      parameters:
+      - description: The unique client identifer
+        explode: false
+        in: path
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentClientResponse'
+          description: OK
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFound'
+          description: Not Found
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Agents
+    put:
+      description: Updates an existing agent client
+      operationId: updateAgentClient
+      parameters:
+      - description: The unique client identifer
+        explode: false
+        in: path
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentClientRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentClientResponse'
+          description: OK
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFound'
+          description: Not Found
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Agents
+  /clients/agents/{clientId}/secret/rotate:
+    post:
+      description: Rotates the client secret of the specified agent client
+      operationId: rotateAgentClientSecret
+      parameters:
+      - description: The unique client identifer
+        explode: false
+        in: path
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RotationRequest'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialsDto'
+          description: OK
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFound'
+          description: Not Found
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Agents
+  /clients/agents/{clientId}/secret/revokeRotated:
+    post:
+      description: Revokes the rotated client secrets of the specified agent client
+      operationId: revokeAgentClientSecrets
+      parameters:
+      - description: The unique client identifer
+        explode: false
+        in: path
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokeSecretResponse'
+          description: OK
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFound'
+          description: Not Found
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Agents
+  /clients/services:
+    get:
+      description: Get all service clients
+      operationId: listAllServiceClients
+      parameters:
+      - description: The page identifier used in pagination.
+        explode: true
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Max number of agent clients to be returned. Defaults to 100.
+        explode: true
+        in: query
+        name: max
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceClientsContainer'
+          description: OK
+          headers:
+            Link:
+              description: RFC 5988 compliant Link header
+              example: <https://appdynamics.sample/administration/v1beta/clients/services?cursor=sfgsrg>;
+                rel="next"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InvalidFilterError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Services
+    post:
+      description: Creates a new service client
+      operationId: createServiceClient
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceClientRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceClientResponseCreate'
+          description: Created
+          headers:
+            Location:
+              description: URL of the created entity
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Services
+  /clients/services/{clientId}:
+    delete:
+      description: Deletes an existing service client
+      operationId: deleteServiceClient
+      parameters:
+      - description: The unique client identifer
+        explode: false
+        in: path
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFound'
+          description: Not Found
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Services
+    get:
+      description: Get a single service client from the client ID
+      operationId: getServiceClientById
+      parameters:
+      - description: The unique client identifer
+        explode: false
+        in: path
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceClientResponse'
+          description: OK
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFound'
+          description: Not Found
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Services
+    put:
+      description: Updates an existing service client
+      operationId: updateServiceClient
+      parameters:
+      - description: The unique client identifer
+        explode: false
+        in: path
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceClientRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceClientResponse'
+          description: OK
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFound'
+          description: Not Found
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Services
+  /clients/services/{clientId}/secret/rotate:
+    post:
+      description: Rotates the client secret of the specified service client
+      operationId: rotateServiceClientSecret
+      parameters:
+      - description: The unique client identifer
+        explode: false
+        in: path
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RotationRequest'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialsDto'
+          description: OK
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFound'
+          description: Not Found
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Services
+  /clients/services/{clientId}/secret/revokeRotated:
+    post:
+      description: Revokes the rotated client secrets of the specified service client
+      operationId: revokeServiceClientSecret
+      parameters:
+      - description: The unique client identifer
+        explode: false
+        in: path
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokeSecretResponse'
+          description: OK
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFound'
+          description: Not Found
+        "500":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Services
+components:
+  schemas:
+    AgentClient:
+      type: object
+    AgentClientRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseClientRequest'
+      - $ref: '#/components/schemas/AgentClient'
+      description: Request object for requests to manage Agent client identities.
+        Extends BaseClientRequest.
+    AgentClientResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseClientResponse'
+      - $ref: '#/components/schemas/AgentClient'
+      description: Response object for requests to manage Agent client identities.
+    AgentClientResponseCreate:
+      allOf:
+      - $ref: '#/components/schemas/BaseClientResponseCreate'
+      - $ref: '#/components/schemas/AgentClient'
+      description: Response object for requests to manage Agent client identities.
+        Includes a generated client secret.
+    AgentClientsContainer:
+      description: Generic response object which contains an array of AgentClientResponse.
+      example:
+        items:
+        - null
+        - null
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AgentClientResponse'
+          type: array
+      type: object
+    BadRequestError:
+      description: The user request was incomplete or invalid. Please check the request
+        and try again.
+      properties:
+        title:
+          example: Invalid Input
+          type: string
+        type:
+          example: https://developer.cisco.com/docs/appdynamics/errors/#!input-validation
+          type: string
+        status:
+          example: 400
+          type: integer
+        detail:
+          example: The displayName was empty. Please provided a valid displayName.
+          type: string
+      type: object
+    BaseClientRequest:
+      properties:
+        displayName:
+          description: The display name for the client.
+          example: My Client
+          type: string
+        description:
+          description: A user provided description of the client.
+          example: This is my client.
+          type: string
+        authType:
+          description: |-
+            Supported authentication methods used to request oAuth tokens:
+            * `client_secret_basic` - The client credentials will be sent in the authorization header.
+            * `client_secret_post` - The client credentials will be sent in the request body.
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          example: client_secret_basic
+          type: string
+      type: object
+    BaseClientResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseClientRequest'
+      - $ref: '#/components/schemas/BaseClientResponse_allOf'
+    BaseClientResponseCreate:
+      allOf:
+      - $ref: '#/components/schemas/BaseClientResponse'
+      - $ref: '#/components/schemas/BaseClientResponseCreate_allOf'
+    CredentialsDto:
+      description: Data object for a client's credentials.
+      example:
+        clientId: c2vubcbl9g26t0uh53x6
+        rotatedSecretExpiresAt: 2021-06-28T21:44:09.000Z
+        clientSecret: iLoyRqXmJl9L40mFK0njfmn3ktRChG5Jt-02SvHkNY
+      properties:
+        clientId:
+          description: The unique client identifier.
+          example: c2vubcbl9g26t0uh53x6
+          type: string
+        clientSecret:
+          description: "The client's secret, used to authenticate during an oAuth\
+            \ token request."
+          example: iLoyRqXmJl9L40mFK0njfmn3ktRChG5Jt-02SvHkNY
+          type: string
+        rotatedSecretExpiresAt:
+          description: The RFC3339 timestamp when the rotated client secret will expire.
+          example: 2021-06-28T21:44:09.000Z
+          type: string
+      type: object
+    InternalServerError:
+      description: An error occured in the service that could not be recovered from.
+      properties:
+        title:
+          example: Internal Server Error
+          type: string
+        type:
+          example: https://developer.cisco.com/docs/appdynamics/errors/#!internalservererror
+          type: string
+        status:
+          example: 500
+          type: integer
+        detail:
+          example: An unexpected error occured on the service.
+          type: string
+      type: object
+    InvalidFilterError:
+      description: "The provided filter specified an incorrect filter attribute, attribute\
+        \ value, or operator."
+      properties:
+        title:
+          example: Invalid Filter
+          type: string
+        type:
+          example: https://developer.cisco.com/docs/appdynamics/errors/#!filter-validation
+          type: string
+        status:
+          example: 400
+          type: integer
+        detail:
+          example: Invalid operator 'gt' provided for attribute 'displayName'.
+          type: string
+      type: object
+    ResourceNotFound:
+      description: The requested client was not found. Check the ID and try again.
+      properties:
+        title:
+          example: Resource Not Found
+          type: string
+        type:
+          example: https://developer.cisco.com/docs/appdynamics/errors/#!not-found
+          type: string
+        status:
+          example: 404
+          type: integer
+        detail:
+          example: Requested resource c2vubcbl9g26t0uh53x6 was not found.
+          type: string
+      type: object
+    RotationRequest:
+      example:
+        revokeRotatedAfter: P4DT12H30M5S
+      properties:
+        revokeRotatedAfter:
+          description: "An ISO-8601 duration for how long the rotated secret will\
+            \ last before expiring. Input can not exceed 30 days. If not specified,\
+            \ defaults to 30 days."
+          example: P4DT12H30M5S
+      type: object
+    ServiceClientRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseClientRequest'
+      description: Request object for requests to manage service clients.
+      type: object
+    ServiceClientResponseCreate:
+      allOf:
+      - $ref: '#/components/schemas/BaseClientResponseCreate'
+      description: Resopnse object for requests to manage service clients. Includes
+        a generated client secret.
+      type: object
+    ServiceClientResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseClientResponse'
+      description: Response object for requests to manage service clients. Extends
+        the BaseClientResponse.
+      type: object
+    ServiceClientsContainer:
+      description: Generic response object which contains an array of ServiceClientResponse.
+      example:
+        items:
+        - null
+        - null
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ServiceClientResponse'
+          type: array
+      type: object
+    RevokeSecretResponse:
+      example:
+        message: All rotated client secrets have been revoked.
+        status: OK
+      properties:
+        status:
+          example: OK
+          type: string
+        message:
+          example: All rotated client secrets have been revoked.
+          type: string
+      required:
+      - message
+      - status
+      type: object
+    BaseClientResponse_allOf:
+      properties:
+        id:
+          description: The unique client identifier.
+          example: c2vubcbl9g26t0uh53x6
+          type: string
+        hasRotatedSecrets:
+          description: Indicates if the client has rotated secrets. Rotated client
+            secrets can be revoked.
+          example: true
+          type: boolean
+        createdAt:
+          description: The RFC3339 timestamp when the client was created.
+          example: 2021-06-28T21:44:09.000Z
+          type: string
+        updatedAt:
+          description: The RFC3339 timestamp when the client was last updated.
+          example: 2021-06-28T21:44:09.000Z
+          type: string
+      type: object
+      example: null
+    BaseClientResponseCreate_allOf:
+      properties:
+        clientSecret:
+          description: "The client's secret, used to authenticate during an oAuth\
+            \ token request."
+          example: iLoyRqXmJl9L40mFK0njfmn3ktRChG5Jt-02SvHkNY
+          type: string
+      type: object
+      example: null
+  securitySchemes:
+    BearerAuth:
+      bearerFormat: jwt
+      scheme: bearer
+      type: http
+x-visibility-level: external
+x-doc-visibility-level: public
