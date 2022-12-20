@@ -80,7 +80,7 @@ No authorization required
 
 ## DeleteConnection
 
-> ConnectionResponse DeleteConnection(ctx, connectionId).Execute()
+> DeleteConnection(ctx, connectionId).Execute()
 
 Delete connection
 
@@ -108,8 +108,6 @@ func main() {
         fmt.Fprintf(os.Stderr, "Error when calling `ConnectionsApi.DeleteConnection``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `DeleteConnection`: ConnectionResponse
-    fmt.Fprintf(os.Stdout, "Response from `ConnectionsApi.DeleteConnection`: %v\n", resp)
 }
 ```
 
@@ -132,7 +130,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**ConnectionResponse**](ConnectionResponse.md)
+ (empty response body)
 
 ### Authorization
 

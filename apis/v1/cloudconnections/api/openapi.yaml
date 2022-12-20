@@ -287,9 +287,7 @@ paths:
       responses:
         "204":
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConnectionResponse'
+            application/json: {}
           description: Connection successfully deleted
         "401":
           content:
@@ -607,6 +605,8 @@ paths:
         style: simple
       responses:
         "204":
+          content:
+            application/json: {}
           description: Connection successfully deleted
         "401":
           content:
