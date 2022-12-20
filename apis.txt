@@ -1,3 +1,3 @@
-https://gist.githubusercontent.com/AniketK-Crest/ab7ad52ec1fe21d39d55d5d94eba1377/raw/87dd8b7034a5097c754cd9926210656b6c7efde1/cloudconnections.json
+https://gist.githubusercontent.com/AniketK-Crest/ab7ad52ec1fe21d39d55d5d94eba1377/raw/08026ed58a9636ae98bdd56f008a0b0f0d6ad0f0/cloudconnections.json
 https://pubhub.devnetcloud.com/media/access-mgmt-service-api/docs/application_principal_management_service.json
 https://pubhub.devnetcloud.com/media/unified-query-language-api/docs/query_service.json
