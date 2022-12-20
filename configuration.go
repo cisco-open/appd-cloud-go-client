@@ -252,3 +252,57 @@ func (c *Configuration) ServerURLWithContext(ctx context.Context, endpoint strin
 
 	return sc.URL(index, variables)
 }
+
+
+func DumpNonSensitive(req string) string {
+	req = maskAuthHeader(req)
+	req = maskSensitiveFields(req)
+
+	return req
+}
+
+func maskSensitiveFields(req string) string {
+	// any json attribute containing the word "secret" will be masked
+	sensitiveFieldsRegEx := `"([a-zA-Z^"]*secret[A-Za-z^"]*)":"((\\"|[^"])*)"`
+	return regexStringReplacer(sensitiveFieldsRegEx, req)
+}
+
+func maskAuthHeader(req string) string {
+	authHeaderRegex := `(Authorization: Bearer )([a-zA-Z0-9.\-_]+)`
+	// (Authorization: Bearer )([a-zA-Z0-9.\-_]+)
+	return regexStringReplacer(authHeaderRegex, req)
+}
+
+func regexStringReplacer(regex string, s string) string {
+	r := regexp.MustCompile(regex)
+	matches := r.FindAllStringSubmatch(s, -1)
+
+	var res string
+	for _, v := range matches {
+		fmt.Println(v[2])
+		sensitiveValue := v[2]
+		maskedString := maskString(sensitiveValue)
+
+		res = strings.ReplaceAll(s, sensitiveValue, maskedString)
+	}
+
+	return res
+}
+
+func maskString(s string) string {
+	l := len(s)
+
+	if l < 5 {
+		return strings.Repeat("*", l)
+	}
+
+	reps := int(math.Min(float64(l)-4, 40.0))
+
+	first2 := s[:2]
+	last2 := s[l-2:]
+
+	maskedString := strings.Repeat("*", reps)
+	finalString := fmt.Sprintf("%v%v%v", first2, maskedString, last2)
+
+	return finalString
+}
