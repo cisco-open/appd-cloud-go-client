@@ -170,7 +170,7 @@ func (c *APIClient) callAPI(request *http.Request) (*http.Response, error) {
 		if err != nil {
 			return nil, err
 		}
-		log.Printf("\n%s\n", string(dump))
+		log.Printf("\n%s\n", client.DumpNonSensitive(string(dump)))
 	}
 
 	resp, err := c.cfg.HTTPClient.Do(request)
@@ -183,7 +183,7 @@ func (c *APIClient) callAPI(request *http.Request) (*http.Response, error) {
 		if err != nil {
 			return resp, err
 		}
-		log.Printf("\n%s\n", string(dump))
+		log.Printf("\n%s\n", client.DumpNonSensitive(string(dump)))
 	}
 	return resp, err
 }
