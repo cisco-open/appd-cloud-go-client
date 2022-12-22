@@ -280,7 +280,6 @@ func regexStringReplacer(regex string, s string) string {
 	matches := r.FindAllStringSubmatch(s, -1)
 
 	for _, v := range matches {
-		fmt.Println(v[2])
 		sensitiveValue := v[2]
 		maskedString := maskString(sensitiveValue)
 
