@@ -265,7 +265,7 @@ func DumpNonSensitive(req string) string {
 
 func maskSensitiveFields(req string) string {
 	// any json attribute containing the word "secret" will be masked
-	sensitiveFieldsRegEx := `"([a-zA-Z^"]*secret[A-Za-z^"]*)":"((\\"|[^"])*)"`
+	sensitiveFieldsRegEx := `"(?i)([a-zA-Z^"]*secret[A-Za-z^"]*)":"((\\"|[^"])*)"`
 	return regexStringReplacer(sensitiveFieldsRegEx, req)
 }
 
