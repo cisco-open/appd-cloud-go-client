@@ -279,16 +279,15 @@ func regexStringReplacer(regex string, s string) string {
 	r := regexp.MustCompile(regex)
 	matches := r.FindAllStringSubmatch(s, -1)
 
-	var res string
 	for _, v := range matches {
 		fmt.Println(v[2])
 		sensitiveValue := v[2]
 		maskedString := maskString(sensitiveValue)
 
-		res = strings.ReplaceAll(s, sensitiveValue, maskedString)
+		s = strings.ReplaceAll(s, sensitiveValue, maskedString)
 	}
 
-	return res
+	return s
 }
 
 func maskString(s string) string {
