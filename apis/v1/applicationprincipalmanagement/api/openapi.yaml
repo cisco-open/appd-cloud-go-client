@@ -472,6 +472,8 @@ paths:
         style: simple
       responses:
         "204":
+          content:
+            application/json: {}
           description: No Content
         "400":
           content:
