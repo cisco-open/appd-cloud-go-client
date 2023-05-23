@@ -3,7 +3,7 @@ Contributing to AppDynamics Go Client
 
 If you would like to contribute code you can do so through GitHub by
 forking the repository and sending a pull request (on a branch other
-than ``master``).
+than ``main``).
 
 When submitting code, please make every effort to follow existing
 conventions and style in order to keep the code as consistent as
@@ -14,7 +14,7 @@ License
 
 By contributing your code, you agree to license your contribution under
 the terms of the MPL-2.0:
-https://github.com/ciscoecosystem/aci-go-client/blob/master/LICENSE
+https://github.com/AniketK-Crest/appdynamicscloud-go-client/blob/main/LICENSE
 
 All files are released with the MPL 2.0 license.
 
