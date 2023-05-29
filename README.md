@@ -66,5 +66,6 @@ if err != nil {
 
 ```
 
-## Adding New Functionality ##
+## Adding New Functionality
+
 In case of adding the new functionality support for new API, you will need to update `apis.txt` file with the API Spec link in the file. [OpenAPI Generator](https://openapi-generator.tech/) is responsible for generation of Go Client SDK as per the changes in the `apis.txt` file. 
