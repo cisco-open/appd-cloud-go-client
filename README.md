@@ -11,7 +11,7 @@ Use `go get` to retrieve the SDK to add it to your `GOPATH` workspace, or projec
 $go get github.com/aniketk-crest/appdynamicscloud-go-client
 ```
 
-There are no additional dependencies needed to be installed.
+There are no additional dependencies that need to be installed.
 
 ## Overview ##
   
