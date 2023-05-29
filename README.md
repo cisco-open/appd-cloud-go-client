@@ -29,7 +29,8 @@ There are no additional dependencies that need to be installed.
 
 * <strong>script.sh</strong> :- This file contains the script which leads to the generation of the Go Client SDK.
 
-## How to Use ##
+## How to Use
+
 Get the specific API Client through which REST call can be made to access the resource. Below is the example of fetching a Connection for a specific `CONNECTION_ID` using Cloud Connection API Client.
 
 ```golang
