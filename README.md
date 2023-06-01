@@ -21,7 +21,7 @@ There are no additional dependencies that need to be installed.
 
 * <strong>.openapi-generator-ignore</strong> :- This file contains the information about individual files or directories that can be ignored.
 
-* <strong>apis.txt</strong> :- This file contains the URLs of the Open API Spec for the Appdynamics Cloud.
+* <strong>apis.txt</strong> :- This file contains the URLs of the Open API Spec for the AppDynamics Cloud.
 
 * <strong>config.yaml</strong> :- This file contains all the additional configuration settings that are needed to generate Go Client SDK.
 
