@@ -1,7 +1,5 @@
-# TODO: Update userid
-gitUserId: aniketk-crest
-# TODO: Update repoid
-gitRepoId: appdynamicscloud-go-client
+gitUserId: cisco-open
+gitRepoId: appd-cloud-go-client
 files:
   client.mustache:
     templateType: SupportingFiles

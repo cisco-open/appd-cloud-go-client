@@ -23,9 +23,8 @@ go get golang.org/x/net/context
 
 Put the package under your project folder and add the following in import:
 
-<!-- TODO: Update url -->
 ```golang
-import applicationprincipalmanagement "github.com/aniketk-crest/appdynamicscloud-go-client"
+import applicationprincipalmanagement "github.com/cisco-open/appd-cloud-go-client"
 ```
 
 To use a proxy, set the environment variable `HTTP_PROXY`:
