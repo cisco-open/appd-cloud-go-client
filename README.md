@@ -1,6 +1,6 @@
 # appdynamicscloud-go-client
 
- This repository contains the golang client SDK to interact with Appdynamics Cloud using REST API calls. This SDK is used by [terraform-provider-appdynamicscloud](https://github.com/AniketK-Crest/terraform-provider-appdynamicscloud).
+ This repository contains the golang client SDK to interact with AppDynamics Cloud using REST API calls. This SDK is used by [terraform-provider-appdynamicscloud](https://github.com/AniketK-Crest/terraform-provider-appdynamicscloud).
 
 ## Installation
 
