@@ -1,14 +1,15 @@
 # appdynamicscloud-go-client
 
- This repository contains the golang client SDK to interact with AppDynamics Cloud using REST API calls. This SDK is used by [terraform-provider-appdynamicscloud](https://github.com/AniketK-Crest/terraform-provider-appdynamicscloud).
+<!-- TODO: Update url -->
+This repository contains the golang client SDK to interact with AppDynamics Cloud using REST API calls. This SDK is used by [terraform-provider-appdynamicscloud](https://github.com/AniketK-Crest/terraform-provider-appdynamicscloud).
 
 ## Installation
 
-Use `go get` to retrieve the SDK to add it to your `GOPATH` workspace, or project's Go module dependencies.
+Use `go get` to retrieve the SDK to add it to your `GOPATH` workspace, or project's Go module dependencies:
 
-
-```sh
-$go get github.com/aniketk-crest/appdynamicscloud-go-client
+<!-- TODO: Update url -->
+```shell
+go get github.com/aniketk-crest/appdynamicscloud-go-client
 ```
 
 There are no additional dependencies that need to be installed.
@@ -33,6 +34,7 @@ There are no additional dependencies that need to be installed.
 
 Get the specific API Client through which REST call can be made to access the resource. Below is the example of fetching a Connection for a specific `CONNECTION_ID` using Cloud Connection API Client.
 
+<!-- TODO: Update url -->
 ```golang
 import (
     "fmt"
