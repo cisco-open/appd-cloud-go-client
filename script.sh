@@ -1,7 +1,7 @@
 #!/bin/bash
 
 git config --global user.name 'GenBot'
-git config --global user.email 'aniketk-crest@users.noreply.github.com'
+git config --global user.email 'cisco-service@users.noreply.github.com'
 
 while IFS= read -r url || [[ -n "$url" ]]; do
     title=$( curl -s $url | jq '. | {title: .info.title}' )

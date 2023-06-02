@@ -1,4 +1,4 @@
-module github.com/aniketk-crest/appdynamicscloud-go-client
+module github.com/cisco-open/appd-cloud-go-client
 
 go 1.19
 

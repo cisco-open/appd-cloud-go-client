@@ -34,7 +34,7 @@ import (
 	"unicode/utf8"
 
 	"golang.org/x/oauth2"
-	client "github.com/aniketk-crest/appdynamicscloud-go-client"
+	client "github.com/cisco-open/appd-cloud-go-client"
 )
 
 var (

@@ -1,14 +1,13 @@
-# appdynamicscloud-go-client
+# appd-cloud-go-client
 
- This repository contains the golang client SDK to interact with Appdynamics Cloud using REST API calls. This SDK is used by [terraform-provider-appdynamicscloud](https://github.com/AniketK-Crest/terraform-provider-appdynamicscloud).
+This repository contains the golang client SDK to interact with AppDynamics Cloud using REST API calls. This SDK is used by [appd-cloud-terraform](https://github.com/cisco-open/appd-cloud-terraform).
 
 ## Installation
 
-Use `go get` to retrieve the SDK to add it to your `GOPATH` workspace, or project's Go module dependencies.
+Use `go get` to retrieve the SDK to add it to your `GOPATH` workspace, or project's Go module dependencies:
 
-
-```sh
-$go get github.com/aniketk-crest/appdynamicscloud-go-client
+```shell
+go get github.com/cisco-open/appd-cloud-go-client
 ```
 
 There are no additional dependencies that need to be installed.
@@ -21,7 +20,7 @@ There are no additional dependencies that need to be installed.
 
 * <strong>.openapi-generator-ignore</strong> :- This file contains the information about individual files or directories that can be ignored.
 
-* <strong>apis.txt</strong> :- This file contains the URLs of the Open API Spec for the Appdynamics Cloud.
+* <strong>apis.txt</strong> :- This file contains the URLs of the Open API Spec for the AppDynamics Cloud.
 
 * <strong>config.yaml</strong> :- This file contains all the additional configuration settings that are needed to generate Go Client SDK.
 
@@ -38,8 +37,8 @@ import (
     "fmt"
     "context"
     "strings"
-    client "github.com/aniketk-crest/appdynamicscloud-go-client"
-    cloudconnectionapi "github.com/aniketk-crest/appdynamicscloud-go-client/apis/v1/cloudconnections"
+    client "github.com/cisco-open/appd-cloud-go-client"
+    cloudconnectionapi "github.com/cisco-open/appd-cloud-go-client/apis/v1/cloudconnections"
 )
 
 // Get the configuration object
