@@ -1,6 +1,6 @@
 # appd-cloud-go-client
 
-This repository contains the golang client SDK to interact with AppDynamics Cloud using REST API calls. This SDK is used by [appd-cloud-terraform](https://github.com/cisco-open/appd-cloud-terraform).
+This repository contains the golang client SDK to interact with AppDynamics Cloud using REST API calls. This SDK is used by [terraform-provider-appd](https://github.com/cisco-open/terraform-provider-appd).
 
 ## Installation
 
