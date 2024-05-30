@@ -33,7 +33,7 @@ import (
 )
 
 func main() {
-    connectionRequest := *openapiclient.NewConnectionRequest(openapiclient.ConnectionRequestDetails{AWSConnectionRequestDetails: penapiclient.AWSConnectionRequestDetails{AWSAccessKeyDetails: openapiclient.NewAWSAccessKeyDetails("AKBATYTCJY7XPKGABY5L", "7ccw68gBKMMXUdXBut+7qC9CCr1brotxD5ClcGGE", openapiclient.ConnectionAccessType("role_delegation"))}}, "AWS dev", openapiclient.ProviderType("aws")) // ConnectionRequest | 
+    connectionRequest := *openapiclient.NewConnectionRequest(openapiclient.ConnectionRequestDetails{AWSConnectionRequestDetails: penapiclient.AWSConnectionRequestDetails{AWSAccessKeyDetails: openapiclient.NewAWSAccessKeyDetails("ABCDEFGHIJKLMNOPQRST", "abcdefghijklmnopqrstuvwxyz1234567890abcd", openapiclient.ConnectionAccessType("role_delegation"))}}, "AWS dev", openapiclient.ProviderType("aws")) // ConnectionRequest | 
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
